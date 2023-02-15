@@ -6,7 +6,7 @@
 #    By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/30 10:26:14 by antbarbi          #+#    #+#              #
-#    Updated: 2023/02/12 15:24:46 by antbarbi         ###   ########.fr        #
+#    Updated: 2023/02/15 16:32:53 by antbarbi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,5 +38,7 @@ fclean:	clean
 
 re:	fclean $(NAME)
 
+val: all
+	@valgrind --leak-check=full ./$(NAME)
 
 .PHONY:	all clean fclean re
