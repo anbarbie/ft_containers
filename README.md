@@ -1,6 +1,8 @@
 # ft_containers
-Ft_containers - The docs that helped me
+Ft_containers - Doc that helped me
 
+
+Containers template --> Norme ISO 1998 c++
 
 
 What is an allocator? https://medium.com/@vgasparyan1995/what-is-an-allocator-c8df15a93ed
