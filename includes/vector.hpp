@@ -6,7 +6,7 @@
 /*   By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 15:06:33 by antbarbi          #+#    #+#             */
-/*   Updated: 2023/02/15 17:09:38 by antbarbi         ###   ########.fr       */
+/*   Updated: 2023/02/17 14:33:01 by antbarbi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,17 @@ namespace ft
 			size_type	max_size() const {return _max_size;}
 			void		resize(size_type sz, T c = T())
 			{
-				(void)c;
-				if (sz <= _size)
+				if (sz == _size)
 					return ;
 				if (sz < _size)
-					for (; _size >= sz; _size--)
-						_alloc.destroy(_array + _size);
-				// if (sz > _size)
-				// {
-				// 	if (sz > _capacity)
-						
-				// 	for (; _size < sz; _size++)
-				// }
+					_size = sz;
+				if (sz > _size)
+				{
+					reserve(sz);
+					for (size_t i = _size; i < sz; i++)
+						_alloc.construct(_array + i, c);
+					_size = sz;
+				}
 			}
 			size_type	capacity() const {return _capacity;}
 			bool		empty() const {return _size == 0;}
@@ -160,13 +159,37 @@ namespace ft
 			 ///////////////////////////////////////		Modifiers		///////////////////////////////////
 			//////////////////////////////////////////////////////////////////////////////////////////////////
 
-			void	clear()
+			void		push_back(const T &x)
 			{
-				for (size_type i = 0; i < _size; i++)
+				if (_size + 1 <= _capacity)
+					_alloc.construct(_array + _size, x);
+				if (_size + 1 > _capacity)
+				{
+					reserve(_capacity * 2);
+					_alloc.construct(_array + _size, x);
+				}
+				++_size;
+			}
+
+			void		pop_back() {--_size;}
+
+			iterator	erase(iterator position)
+			{
+				_alloc.destroy(_array + position);
+				--_size;
+			}
+
+			void		clear()
+			{
+				// for (size_type i = 0; i < _size; i++) if used then undefined behaviour is not coherent
+					// with real implementation of std::vector
+				for (size_type i = 0; i < _capacity; i++)
 					_alloc.destroy(_array + i);
 				_alloc.deallocate(_array, _capacity);
 				_array = NULL, _capacity = 0, _size = 0;
 			}
+
+			
 
 		private:
 
