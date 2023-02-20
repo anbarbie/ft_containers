@@ -6,7 +6,7 @@
 /*   By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 15:06:33 by antbarbi          #+#    #+#             */
-/*   Updated: 2023/02/17 14:33:01 by antbarbi         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:05:25 by antbarbi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,11 @@ namespace ft
 				if (sz == _size)
 					return ;
 				if (sz < _size)
+				{
+					for (size_t i = sz; i < _size; i++)
+						_alloc.destroy(_array + i);
 					_size = sz;
+				}
 				if (sz > _size)
 				{
 					reserve(sz);
@@ -161,6 +165,8 @@ namespace ft
 
 			void		push_back(const T &x)
 			{
+				if (_size == 0 && _capacity == 0)
+					reserve(1);
 				if (_size + 1 <= _capacity)
 					_alloc.construct(_array + _size, x);
 				if (_size + 1 > _capacity)
@@ -171,19 +177,58 @@ namespace ft
 				++_size;
 			}
 
-			void		pop_back() {--_size;}
+			void		pop_back() //normally put size to 0 - 1 value and do nothing
+			{
+				if (_size == 0)	
+					return ;
+				_alloc.destroy(_array + --_size);
+			}
 
 			iterator	erase(iterator position)
 			{
-				_alloc.destroy(_array + position);
+				size_t 	i = 0;
+
+				for (iterator it = begin(); it != position; it++)
+					i++;
 				--_size;
+				for (; i < _size; i++)
+				{
+					_alloc.destroy(_array + i);
+					_alloc.construct(_array + i, _array[i + 1]);
+				}
+				return position;
+			}
+
+			iterator	erase(iterator first, iterator last)
+			{
+				size_t 	len = 0;
+				size_t	i = 0;
+
+				if (first == last)
+					return first;
+				for (iterator it = first; it != last; it++)
+					len++;
+				for (iterator it = begin(); it != first; it++)
+					i++;
+				for (iterator it = first; it != last; it++)
+				{
+					_alloc.destroy(_array + i);
+					if (i + len < _size)
+					{
+						_alloc.construct(_array + i, _array[i + len]);
+						_alloc.destroy(_array + (i + len));
+					}
+					i++;
+				}
+				_size -= len;
+				return first;
 			}
 
 			void		clear()
 			{
 				// for (size_type i = 0; i < _size; i++) if used then undefined behaviour is not coherent
 					// with real implementation of std::vector
-				for (size_type i = 0; i < _capacity; i++)
+				for (size_type i = 0; i < _size; i++)
 					_alloc.destroy(_array + i);
 				_alloc.deallocate(_array, _capacity);
 				_array = NULL, _capacity = 0, _size = 0;

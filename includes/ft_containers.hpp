@@ -6,7 +6,7 @@
 /*   By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 12:29:18 by antbarbi          #+#    #+#             */
-/*   Updated: 2023/02/12 15:20:41 by antbarbi         ###   ########.fr       */
+/*   Updated: 2023/02/20 12:46:56 by antbarbi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,52 @@
  #include "random_access_iterator.hpp"
  #include "vector.hpp"
 
-template < class T >
-class my_vector
+class my_class
 {
 	public:
 
-		my_vector() {
-			for (T i = 0; i < 10; i++)
+		my_class() {
+			_array = new int[10];
+			for (int i = 0; i < 10; i++)
 				_array[i] = i * 10;
 		}
-		my_vector(my_vector const &obj) {*this = obj;}
-		~my_vector() {};
-		
-		typedef	ft::random_access_iterator<T>		iterator;
-		typedef ft::random_access_iterator<const T>	const_iterator;
+		my_class(size_t n) : _array(new int[10])
+		{
+			for (int i = 0; i < 10; i++)
+				_array[i] = i * n;
+		}
+		my_class(my_class const &obj) : _array(new int[10]) {
+			for (int i = 0; i < 10; i++)
+				_array[i] = i * 10;
+			*this = obj;
+		}
+		~my_class() {delete []_array;}
 
-		iterator	begin() {return &_array[0];}
-		iterator	end() {return	&_array[10];}
-		const_iterator	cbegin() const {return &_array[0];}
-		const_iterator	cend() const {return	&_array[10];}
-   
+		my_class	&operator =(my_class const &rhs)
+		{
+			if (this == &rhs)
+				return *this;
+			for (int i = 0; i < 10; i++)
+				_array[i] = rhs._array[i];
+			return (*this);
+		}
+
+		void	print() const
+		{
+			for (int i = 0; i < 10; i++)
+				std::cout << _array[i] << " ";
+			std::cout << std::endl;
+		}
+
 	private:
 
-		T	_array[10];
+		int	*_array;
 };
+
+std::ostream &operator <<(std::ostream &o, my_class const &rhs)
+{
+	rhs.print();
+	return o;
+}
 
 #endif
