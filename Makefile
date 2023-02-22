@@ -6,7 +6,7 @@
 #    By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/30 10:26:14 by antbarbi          #+#    #+#              #
-#    Updated: 2023/02/15 16:32:53 by antbarbi         ###   ########.fr        #
+#    Updated: 2023/02/21 10:57:52 by antbarbi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,11 @@ CXX				= c++
 
 CXXFLAGS		= -Wall -Wextra -Werror -std=c++98 -I$(INCLUDES)
 
+###############
+go: all
+	./$(NAME)
+###############
+
 all: $(NAME)
 
 $(NAME): $(OBJS)
@@ -38,7 +43,12 @@ fclean:	clean
 
 re:	fclean $(NAME)
 
+
+############################################
 val: all
 	@valgrind --leak-check=full ./$(NAME)
+
+############################################
+
 
 .PHONY:	all clean fclean re

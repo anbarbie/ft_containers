@@ -6,7 +6,7 @@
 /*   By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 12:29:18 by antbarbi          #+#    #+#             */
-/*   Updated: 2023/02/20 12:46:56 by antbarbi         ###   ########.fr       */
+/*   Updated: 2023/02/22 10:32:25 by antbarbi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@
  #include <algorithm>
  #include <cstddef>
  #include <vector>
+ #include <iterator>
 
  #include "random_access_iterator.hpp"
  #include "vector.hpp"
+
+ #include "color.hpp"
 
 class my_class
 {
@@ -67,6 +70,68 @@ std::ostream &operator <<(std::ostream &o, my_class const &rhs)
 {
 	rhs.print();
 	return o;
+}
+
+template < typename T >
+void	PrintContainer(std::vector<T> const &vec)
+{
+		std::cout << RED << "Cp: " << vec.capacity();
+		std::cout << " Sz: " << vec.size() << RESET << std::endl;
+		for (size_t i = 0; i < vec.capacity(); i++)
+		{
+			if (i < vec.size())
+				std::cout << vec[i] << " ";
+			else if (i < vec.capacity())
+				std::cout << BLUE << vec[i] << RESET << " ";
+		}
+		std::cout << std::endl;
+		std::cout << std::endl;
+}
+
+template < typename T >
+void	PrintContainer(ft::vector<T> const &vec)
+{
+		std::cout << RED << "Cp: " << vec.capacity();
+		std::cout << " Sz: " << vec.size() << RESET << std::endl;
+		for (size_t i = 0; i < vec.capacity(); i++)
+		{
+			if (i < vec.size())
+				std::cout << vec[i] << " ";
+			else if (i < vec.capacity())
+				std::cout << BLUE << vec[i] << RESET << " ";
+		}
+		std::cout << std::endl;
+		std::cout << std::endl;
+}
+
+template < typename T >
+void	PrintContainer_ptr(ft::vector<T> const &vec)
+{
+		std::cout << RED << "Cp: " << vec.capacity();
+		std::cout << " Sz: " << vec.size() << RESET << std::endl;
+		for (size_t i = 0; i < vec.capacity(); i++)
+		{
+			if (i < vec.size())
+				std::cout << &vec[i] << " ";
+			else if (i < vec.capacity())
+				std::cout << BLUE << &vec[i] << RESET << " ";
+		}
+		std::cout << std::endl;
+}
+
+template < typename T >
+void	PrintContainer_ptr(std::vector<T> const &vec)
+{
+	std::cout << RED << "Cp: " << vec.capacity();
+	std::cout << " Sz: " << vec.size() << RESET << std::endl;
+	for (size_t i = 0; i < vec.capacity(); i++)
+	{
+		if (i < vec.size())
+			std::cout << &vec[i] << " ";
+		else if (i < vec.capacity())
+			std::cout << BLUE << &vec[i] << RESET << " ";
+	}
+	std::cout << std::endl;
 }
 
 #endif

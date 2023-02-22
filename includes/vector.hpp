@@ -6,7 +6,7 @@
 /*   By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 15:06:33 by antbarbi          #+#    #+#             */
-/*   Updated: 2023/02/20 18:05:25 by antbarbi         ###   ########.fr       */
+/*   Updated: 2023/02/22 10:43:40 by antbarbi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,10 +186,8 @@ namespace ft
 
 			iterator	erase(iterator position)
 			{
-				size_t 	i = 0;
+				size_t 	i = distance(begin(), position);
 
-				for (iterator it = begin(); it != position; it++)
-					i++;
 				--_size;
 				for (; i < _size; i++)
 				{
@@ -201,15 +199,12 @@ namespace ft
 
 			iterator	erase(iterator first, iterator last)
 			{
-				size_t 	len = 0;
-				size_t	i = 0;
-
 				if (first == last)
 					return first;
-				for (iterator it = first; it != last; it++)
-					len++;
-				for (iterator it = begin(); it != first; it++)
-					i++;
+
+				size_t 	len = distance(first, last);
+				size_t	i = distance(begin(), first);
+
 				for (iterator it = first; it != last; it++)
 				{
 					_alloc.destroy(_array + i);
@@ -221,13 +216,153 @@ namespace ft
 					i++;
 				}
 				_size -= len;
+				if (last == end())
+					return end();
 				return first;
+			}
+
+			iterator	insert(iterator position, const T &x) //real segfault when access out of end
+			{
+				if (_size < distance(begin(), position)) //segfault module changed to return module
+					return position;					//real segfault when _capacity < distance during destruct
+				if (_size == 0 && _capacity == 0 )
+				{
+					reserve(1);
+					position = begin();
+				}
+				if (_size + 1 > _capacity)
+				{
+					size_t len = distance(begin(), position);
+					reserve(_capacity * 2);
+					position = begin() + len;
+				}
+				if (_size + 1 <= _capacity)
+				{
+					size_t	index = distance(begin(), position);
+					for (size_t i = _size; i > index; i--)
+					{
+						if (i != _size)
+							_alloc.destroy(&_array[i]);
+						_alloc.construct(&_array[i], _array[i - 1]);
+					}
+					if (index != _size)
+						_alloc.destroy(&_array[index]);
+					_alloc.construct(&_array[index], x);
+				}
+				++_size;
+				return position;
+			}
+
+			void	insert(iterator position, size_type n, const T &x) //capacity is * 2, if it exceeds capacity x2 = custom capac
+			{
+				if (_size < distance(begin(), position)) 
+					return ;
+				if (_size == 0 && _capacity == 0 )
+				{
+					reserve(n);
+					position = begin();
+				}
+				if (_size + n > _capacity)
+				{
+					size_t len = distance(begin(), position);
+					if (_capacity * 2 < _size + n)
+						reserve(_size + n);
+					else
+						reserve(_capacity * 2);
+					position = begin() + len;
+				}
+				if (_size + n <= _capacity)
+				{
+					size_t	index = distance(begin(), position);
+					for (size_t i = _size + n; i > index + n; i--)
+					{
+						if (i >= _size)
+							_alloc.destroy(&_array[i]);
+						_alloc.construct(&_array[i], _array[i - n]);
+					}
+					for (size_t i = index + n; i >= index; i--)
+					{
+						if (i >= _size)
+							_alloc.destroy(&_array[i]);
+						_alloc.construct(&_array[i], x);
+					}
+				}
+				_size += n;
+			}
+
+			template < class InputIterator >
+			void	insert(iterator position, InputIterator first, InputIterator last)
+			{ //check if range is not from the same vector else have to deep copy.
+				vector<value_type> tmp(*this);
+				if (last < first) // check if range is good
+					return ;
+				for (size_t i = 0; begin() + i != end(); i++)
+				{
+					if (begin() + i == first)
+						first = tmp.begin() + i;
+					if (begin() + i == last)
+						last = tmp.begin() + i;
+				}
+				size_t range = distance(first, last);
+				if (_size < distance(begin(), position))
+					return ;
+				if (_size == 0 && _capacity == 0)
+				{
+					reserve(range);
+					position = begin();
+				}
+				if (_size + range > _capacity)
+				{
+					size_t len = distance(begin(), position);
+					if (_capacity * 2 < _size + range)
+						reserve(_size + range);
+					else
+						reserve(_capacity * 2);
+					position = begin() + len;
+				}
+				if (_size + range <= _capacity)
+				{
+					size_t	index = distance(begin(), position) - 1;
+					for (size_t i = _size + range; i > index + range; i--)
+					{
+						if (i >= _size)
+							_alloc.destroy(&_array[i]);
+						_alloc.construct(&_array[i], _array[i - range]);
+					}
+					InputIterator cp_last = last;
+					for (size_t i = index + range; i > index; i--)
+					{
+						if (i >= _size)
+							_alloc.destroy(&_array[i]);	
+						_alloc.construct(&_array[i], *--cp_last);
+					}
+				}
+				_size += range;
+			}
+
+			void		swap(vector<T,Allocator>&vec)
+			{
+				pointer			tmp_array = _array;
+				size_t			tmp_capacity = _capacity;
+				size_t			tmp_max_size = _max_size;
+				size_t			tmp_size = _size;
+				allocator_type	tmp_alloc = _alloc;
+				
+				_array = vec._array;
+				_capacity = vec._capacity;
+				_max_size = vec._max_size;
+				_size = vec._size;
+				_alloc = vec._alloc;
+
+				vec._array = tmp_array;
+				vec._capacity = tmp_capacity;
+				vec._max_size = tmp_max_size;
+				vec._size = tmp_size;
+				vec._alloc = tmp_alloc;
 			}
 
 			void		clear()
 			{
-				// for (size_type i = 0; i < _size; i++) if used then undefined behaviour is not coherent
-					// with real implementation of std::vector
 				for (size_type i = 0; i < _size; i++)
 					_alloc.destroy(_array + i);
 				_alloc.deallocate(_array, _capacity);
@@ -245,6 +380,17 @@ namespace ft
 			allocator_type	_alloc;
 
 	};
+
+	////////////////////////////////////////
+
+	template < typename T >
+	size_t	distance(ft::random_access_iterator<T> first,ft::random_access_iterator<T> last)
+	{
+		size_t len = 0;
+		for (ft::random_access_iterator<T> it = first; it != last; it++)
+			len++;
+		return len;
+	}
 }
 
 #endif
