@@ -6,7 +6,7 @@
 /*   By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 15:06:33 by antbarbi          #+#    #+#             */
-/*   Updated: 2023/02/22 10:43:40 by antbarbi         ###   ########.fr       */
+/*   Updated: 2023/02/22 14:55:59 by antbarbi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
  #define VECTOR_HPP
  #include <memory>
  #include "random_access_iterator.hpp"
+ #include "utils.hpp"
  #include <sstream>
  
 namespace ft
@@ -48,11 +49,18 @@ namespace ft
 				for (size_type i = 0; i < _size; i++)
 					_alloc.construct(_array + i, Value);
 			}
-			// template < class InputIterator >
-			// vector(InputIterator first, InputIterator last, const Allocator &alloc = Allocator())
-			// {
-			// 	;
-			// }
+			template < class InputIterator >
+			vector(typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first,
+					InputIterator last, const Allocator &alloc = Allocator())
+						: _array(NULL), _capacity(distance(first, last)), 
+							_max_size(alloc.max_size()), _size(distance(first, last)), _alloc(alloc)
+			{
+				if (!_size)
+					return ;
+				_array = _alloc.allocate(_capacity);
+				for (size_t i = 0; i < _size; i++)
+					_alloc.construct(_array + i, first[i]);
+			}
 			vector(const vector<T,Allocator> &x)
 			 	: _array(NULL), _capacity(0), _size(0) {*this = x;}
 			~vector() {clear();}
@@ -70,8 +78,27 @@ namespace ft
 					_alloc.construct(_array + i, x[i]);
 				return (*this);
 			}
-			// template < class InputIterator >
-			// void assign(size_type n, const T& u) {;}
+			template < class InputIterator >
+			void assign(InputIterator first,
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
+			{
+				size_t len = distance(first, last);
+				reserve(len);
+				for (size_t i = 0; i < _size; i++)
+					_alloc.destroy(_array + i);
+				_size = len;
+				for (size_t i = 0; i < _size; i++)
+					_alloc.construct(_array + i, first[i]);
+			}
+			void assign(size_type n, const T& u)
+			{
+				reserve(n);
+				for (size_t i = 0; i < _size; i++)
+					_alloc.destroy(_array + i);
+				_size = n;
+				for (size_t i = 0; i < _size; i++)
+					_alloc.construct(_array + i, u);
+			}
 			allocator_type get_allocator() const {return _alloc;}
 
 			  //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,8 +318,9 @@ namespace ft
 			}
 
 			template < class InputIterator >
-			void	insert(iterator position, InputIterator first, InputIterator last)
-			{ //check if range is not from the same vector else have to deep copy.
+			void	insert(iterator position, InputIterator first,
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
+			{
 				vector<value_type> tmp(*this);
 				if (last < first) // check if range is good
 					return ;
@@ -381,16 +409,6 @@ namespace ft
 
 	};
 
-	////////////////////////////////////////
-
-	template < typename T >
-	size_t	distance(ft::random_access_iterator<T> first,ft::random_access_iterator<T> last)
-	{
-		size_t len = 0;
-		for (ft::random_access_iterator<T> it = first; it != last; it++)
-			len++;
-		return len;
-	}
 }
 
 #endif

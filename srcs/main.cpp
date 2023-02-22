@@ -6,7 +6,7 @@
 /*   By: antbarbi <antbarbi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 17:48:14 by antbarbi          #+#    #+#             */
-/*   Updated: 2023/02/22 10:47:57 by antbarbi         ###   ########.fr       */
+/*   Updated: 2023/02/22 14:03:38 by antbarbi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,20 @@ int	main()
 		vec.reserve(10);
 		for (int i = 0; i < 10; i++)
 			vec.push_back(i * 10);
-
-		ft::vector<int> vec2;
-		vec2.reserve(3);
-		for (int i =1; i < 4; i++)
-			vec2.push_back(i * 100);
 		
+		ft::vector<int> vec2;
+		for (int i = 1; i < 5; i++)
+			vec2.push_back(i * 100);
+
+		
+		PrintContainer(vec);
 		PrintContainer(vec2);
+
+		vec.assign(vec2.begin(), vec2.end());
+		// vec.assign(vec2.end(), vec2.begin());
+
 		PrintContainer(vec);
-		vec.insert(vec.begin() + 5, vec2.begin(), vec2.begin() + 3);
 		PrintContainer(vec2);
-		PrintContainer(vec);
-		vec.insert(vec.begin() + 5, vec.begin()+ 2, vec.begin() + 6);
-		PrintContainer(vec);
 	}
 /* 	std::cout << BOLDBLUE << "TEST 2 : Real vector - Capacity test" << RESET << std::endl;
 	std::cout << std::endl;
@@ -306,4 +307,59 @@ int	main()
 		PrintContainer(vec);
 		std::cout << "it: " << *it << " it2: " << *it2 << std::endl;
 	} */
+/* 	std::cout << BOLDBLUE << "TEST 12 : Real vector - construct by range" << RESET << std::endl;
+	std::cout << std::endl;
+	{
+		std::vector<int> vec;
+		vec.reserve(10);
+		for (int i = 0; i < 10; i++)
+			vec.push_back(i * 10);
+
+		// std::vector<int> vec2(vec.begin(), vec.begin());
+		// std::vector<int> vec2(vec.end(), vec.begin());
+		std::vector<int> vec2(vec.begin(), vec.end());
+		
+		PrintContainer(vec2);
+		PrintContainer_ptr(vec2);
+		PrintContainer(vec);
+		PrintContainer_ptr(vec);
+	} */
+/* 	std::cout << BOLDBLUE << "TEST 13 : Real vector - assign(n, const &u)" << RESET << std::endl;
+	std::cout << std::endl;
+	{
+		std::vector<int> vec;
+		vec.reserve(10);
+		for (int i = 0; i < 10; i++)
+			vec.push_back(i * 10);
+		
+		PrintContainer(vec);
+
+		vec.assign(0, 999);
+		PrintContainer(vec);
+		vec.assign(5, 999);
+		PrintContainer(vec);
+		vec.assign(15, 999);
+		PrintContainer(vec);
+	} */
+	std::cout << BOLDBLUE << "TEST 14 : Real vector - assign(first, last)" << RESET << std::endl;
+	std::cout << std::endl;
+	{
+		std::vector<int> vec;
+		vec.reserve(10);
+		for (int i = 0; i < 10; i++)
+			vec.push_back(i * 10);
+		
+		std::vector<int> vec2;
+		for (int i = 1; i < 5; i++)
+			vec2.push_back(i * 100);
+
+		PrintContainer(vec);
+		PrintContainer(vec2);
+
+		vec.assign(vec2.begin(), vec2.end());
+		// vec.assign(vec2.end(), vec2.begin());
+
+		PrintContainer(vec);
+		PrintContainer(vec2);
+	}
 }
