@@ -11,8 +11,8 @@ To use the `vector` container, follow the steps below:
 1. Clone this repository to your local machine:
 
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/anbarbie/ft_containers.git
+   cd ft_containers
    ```
 
 2. Compile the code and generate the executable using the provided Makefile:
@@ -36,7 +36,7 @@ To use the `vector` container, follow the steps below:
 The repository includes the following files:
 
 - `vector.hpp`: Implementation of the `vector` container.
-- `<container>.hpp`: Additional files implementing `std::iterator_traits`, `std::reverse_iterator`, `std::enable_if`, `std::is_integral`, and `std::equal` or `std::lexicographical_compare` features.
+- `.hpp`: Additional files implementing `std::iterator_traits`, `std::reverse_iterator`, `std::enable_if`, `std::is_integral`, and `std::equal` or `std::lexicographical_compare` features.
 - `Makefile`: Used for compiling the code and generating the executable.
 - `main.cpp`: Sample code demonstrating the usage of the `vector` container and other implemented features.
 
